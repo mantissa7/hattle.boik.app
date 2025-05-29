@@ -1,7 +1,7 @@
 import "./index.css";
 import alsitty from "@/assets/alsitty.png";
 import type { User } from "@/lib/db";
-import { FormEventHandler, useEffect, useState } from "react";
+import { type FormEventHandler, useEffect, useState } from "react";
 
 type Video = {
   video_id: string;
@@ -95,7 +95,7 @@ export function App() {
       setAnswer(true);
       return;
     }
-    
+
     setAnswer(false);
 
     return false;
