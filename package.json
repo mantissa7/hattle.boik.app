@@ -1,0 +1,25 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/server.ts",
+  "module": "src/server.ts",
+  "scripts": {
+    "dev": "bun --hot src/server.ts",
+    "init": "bun src/server.ts init",
+    "build": "bun build ./src/server.ts --outdir=dist --minify --define:process.env.NODE_ENV='\"production\"'",
+    "compile": "bun build ./src/server.ts --compile --outfile=fingle --minify --define:process.env.NODE_ENV='\"production\"'",
+    "start": "NODE_ENV=production bun src/server.ts"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/bun": "latest"
+  }
+}
