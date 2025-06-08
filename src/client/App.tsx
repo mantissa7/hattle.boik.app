@@ -1,10 +1,10 @@
 import "./index.css";
 import alsitty from "@/assets/alsitty.png";
 import type { User } from "@/lib/db";
-import { type FormEventHandler, useEffect, useState } from "react";
+import { type FormEventHandler, useEffect, useMemo, useRef, useState } from "react";
 
 type Video = {
-  video_id: string;
+  id: string;
   published_at: string;
   title: string;
   thumbnails: Thumbnails;
@@ -36,16 +36,6 @@ const months = [
   'October', 'Novemeber', 'December'
 ];
 
-const year = (isoDate: string) => {
-  console.log(new Date(isoDate).getFullYear());
-
-  return new Date(isoDate).getFullYear();
-}
-
-const month = (isoDate: string) => {
-  return new Date(isoDate).toLocaleString('default', { month: 'long' });
-}
-
 const setQuery = (params: Record<string, string | null | undefined>, dispatch = true) => {
   const s = Object.entries(params).filter(([k, v]) => v !== null && v !== undefined) as [string, string][];
   const state = new URLSearchParams(s).toString();
@@ -57,10 +47,14 @@ const setQuery = (params: Record<string, string | null | undefined>, dispatch = 
 }
 
 export function App() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [user, setUser] = useState<User | null>(null);
   const [searchParams, setSearchParams] = useState<URLSearchParams>(new URLSearchParams(window.location.search));
   const [answer, setAnswer] = useState<boolean | null>(null);
-  const [video, setVideo] = useState<Video>();
+  const [videos, setVideos] = useState<Video[]>();
+  const [question, setQuestion] = useState<number>(0);
+  // const video = useMemo((vids) => vids[question], [videos, question])
+  const video = videos?.[question];
 
   useEffect(() => {
     window.addEventListener('popstate', (e) => {
@@ -74,31 +68,46 @@ export function App() {
       const user = await userResp.json();
       const videosResp = await fetch('/api/videos');
       const videos = await videosResp.json() as Video[];
-      setVideo(videos[0]);
+      setVideos(videos);
 
 
       setUser(user);
     })();
   }, []);
 
-  const handleGuess: FormEventHandler<HTMLFormElement> = (e) => {
+  // useEffect(() => {
+    
+  // }, [question]);
+
+  const handleGuess: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    const form = new FormData(e.target);
-    const y = year(video?.published_at);
-    const m = month(video?.published_at);
+    const form = e.target as HTMLFormElement
+    const fd = new FormData(form);
 
-    const fy = form.get('year')!;
-    const fm = form.get('month')!;
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: fd
+    })
 
-    if (y === +fy && m === fm) {
-      setAnswer(true);
-      return;
+    if (!res.ok) {
+      alert('Bad joojoo');
+      return
     }
 
-    setAnswer(false);
+    const body = await res.json();
+
+    setAnswer(Boolean(body));
 
     return false;
+  }
+
+  const onNextQuestion = () => {
+    console.log(question)
+    const q = question + 1;
+    formRef.current?.reset();
+    setQuestion(q);
+    setAnswer(null);
   }
 
   const closeBanner = () => {
@@ -122,20 +131,34 @@ export function App() {
       <h1>HATTLE</h1>
 
       <main>
-        <div className="thumb">
-          <img src={video?.thumbnails.maxres.url} alt="" />
+        <div className="image-area">
+          <div className="thumbnail">
+            <img src={video?.thumbnails.maxres.url} alt="" />
+          </div>
         </div>
-        <form className="guesses" onSubmit={handleGuess}>
-          <select name="year" id="year">
-            {years?.map(year => (
-              <option key={year} value={year}>{year}</option>
+
+        <form ref={formRef} className="guesses" action="/api/videos" onSubmit={handleGuess}>
+          <input type="hidden" name="id" value={video?.id} />
+          <input type="hidden" name="question" value={1} />
+          <h2>Year</h2>
+          {/* <input type="range" name="" id="" min={2013} max={2025} step={1} /> */}
+          <fieldset className="radio-group">
+            {years.map(yr => (
+              <label className="radio-group-option" key={yr}>
+                <span>{yr}</span>
+                <input key={yr} type="radio" name="year" value={yr} />
+              </label>
             ))}
-          </select>
-          <select name="month" id="month">
-            {months?.map(month => (
-              <option key={month} value={month} >{month}</option>
+          </fieldset>
+          <h2>Month</h2>
+          <fieldset className="radio-group">
+            {months.map((mnth, i) => (
+              <label className="radio-group-option" key={mnth}>
+                <span>{mnth}</span>
+                <input key={mnth} type="radio" name="month" value={i + 1} />
+              </label>
             ))}
-          </select>
+          </fieldset>
           <input type="submit" value="Guess!" />
         </form>
       </main>
@@ -143,16 +166,17 @@ export function App() {
       {answer !== null && (
         <div className="answer">
           {answer === true && (
-            <h1>WOO</h1>
+            <div className="cokhex">CORRECT!</div>
           )}
           {answer === false && (
-            <h1>MUNTER</h1>
+            <div className="cokhex">MUNTER</div>
           )}
+          <button type="button" onClick={() => onNextQuestion()}>NEXT</button>
         </div>
       )}
 
       {user && (
-        <img id="alsitty" src={alsitty} alt="" />
+        <img id="alsitty" src={alsitty} alt=""/>
       )}
     </div>
   );
