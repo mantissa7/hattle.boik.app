@@ -49,39 +49,100 @@
     gap: 20px;
     justify-self: stretch;
 
+    &:invalid {
+      input[type=submit] {
+        /* background: red!important; */
+        cursor: not-allowed;
+        opacity: 0.5;
+      }  
+    }
+
     input[type=submit] {
-      background: var(--pink);
+      background: var(--secondary);
       border: none;
       height: 50px;
       border-radius: 12px;
       padding: 0 20px;
       grid-column: 1 / -1;
+      cursor: pointer;
+
+      &:hover {
+        background: hsl(from var(--secondary) h calc(s + 25) l);
+      }
     }
 
     fieldset.radio-group {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       border: none;
       margin: 0;
       padding: 0;
-      gap: 20px;
+      grid-auto-flow: column;
+      position: relative;
+
+      &::before {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--secondary);
+        content: "";
+      }
+
+      >:first-child {
+        &::after {
+          position: absolute;
+          content: "";
+          left: 0;
+          bottom: 0;
+          height: 20px;
+          width: 2px;
+          background: var(--secondary);
+        }
+      }
+
+      >:last-child {
+        &::after {
+          position: absolute;
+          content: "";
+          right: 0;
+          bottom: 0;
+          height: 20px;
+          width: 2px;
+          background: var(--secondary);
+        }
+      }
 
       label.radio-group-option {
         position: relative;
         height: 50px;
-        background: var(--blue);
-        border-radius: 50px;
         display: grid;
         place-items: center;
         color: #fff;
+
+        &::before {
+          position: absolute;
+          content: "";
+          left: calc(50% - 1px);
+          bottom: 0;
+          height: 10px;
+          width: 2px;
+          background: var(--secondary);
+          display: grid;
+          place-items: center;
+        }
+
+        &:hover:not(&:has(input[type=radio]:checked)) {
+          color: var(--secondary);
+          cursor: pointer;
+        }
 
         &:focus-within {
           outline: 3px solid #fff;
         }
 
         &:has(input[type=radio]:checked) {
-          border: 1px solid red;
-          background: var(--pink);
+          background: var(--secondary);
         }
 
         >input[type=radio] {
@@ -89,6 +150,8 @@
           inset: 0;
           opacity: 0;
           outline: none;
+          margin: 0;
+          cursor: pointer;
         }
       }
     }
@@ -120,7 +183,7 @@
       right: 0;
       top: 40%;
       bottom: 40%;
-      background: var(--pink);
+      background: var(--secondary);
       content: "";
       z-index: -1;
     }

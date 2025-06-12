@@ -11,8 +11,8 @@
 }
 
 :root {
-    --pink: #fb438a;
-    --blue: #1dc8e8;
+    --secondary: #fb438a;
+    --primary: #1dc8e8;
     --background: #26262e;
     --icon-colour: #fff;
 
@@ -40,13 +40,13 @@ h1 {
     margin: 0;
     font-family: PinkBlue, sans-serif;
     font-size: 40px;
-    color: var(--blue);
+    color: var(--primary);
     letter-spacing: 20px;
     text-shadow:
-        0 0 4px var(--pink),
-        0 0 4px var(--pink),
-        0 0 4px var(--pink),
-        0 0 4px var(--pink);
+        0 0 4px var(--secondary),
+        0 0 4px var(--secondary),
+        0 0 4px var(--secondary),
+        0 0 4px var(--secondary);
     -webkit-text-stroke: 2px black;
 
     @media screen and (max-width: 600px) {
@@ -56,7 +56,7 @@ h1 {
 
 
 button {
-    background: var(--pink);
+    background: var(--secondary);
     min-height: 40px;
     border: none;
     cursor: pointer;
@@ -70,7 +70,7 @@ button {
 }
 
 .login-btn {
-    background: var(--pink);
+    background: var(--secondary);
     padding: 12px 24px;
     border-radius: 3px;
     color: #fff;

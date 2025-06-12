@@ -97,7 +97,7 @@ export function App() {
 
     const body = await res.json();
 
-    setAnswer(Boolean(body));
+    setAnswer(Boolean(body.result));
 
     return false;
   }
@@ -140,22 +140,21 @@ export function App() {
         <form ref={formRef} className="guesses" action="/api/videos" onSubmit={handleGuess}>
           <input type="hidden" name="id" value={video?.id} />
           <input type="hidden" name="question" value={1} />
-          <h2>Year</h2>
-          {/* <input type="range" name="" id="" min={2013} max={2025} step={1} /> */}
+          {/* <h2>Year</h2> */}
           <fieldset className="radio-group">
             {years.map(yr => (
               <label className="radio-group-option" key={yr}>
                 <span>{yr}</span>
-                <input key={yr} type="radio" name="year" value={yr} />
+                <input key={yr} type="radio" name="year" value={yr} required/>
               </label>
             ))}
           </fieldset>
-          <h2>Month</h2>
+          {/* <h2>Month</h2> */}
           <fieldset className="radio-group">
             {months.map((mnth, i) => (
               <label className="radio-group-option" key={mnth}>
                 <span>{mnth}</span>
-                <input key={mnth} type="radio" name="month" value={i + 1} />
+                <input key={mnth} type="radio" name="month" value={i + 1} required/>
               </label>
             ))}
           </fieldset>

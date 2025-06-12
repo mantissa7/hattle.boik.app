@@ -43,7 +43,6 @@ const server = serve({
 			},
 			async POST(req) {
 				try {
-
 					const fd = await req.formData();
 					const id = fd.get("id") as string | undefined;
 	
