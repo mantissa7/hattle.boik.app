@@ -10,6 +10,12 @@
     src: url('../fonts/pricedown\ bl.ttf');
 }
 
+@property --btn-primary {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #fb438a;
+}
+
 :root {
     --secondary: #fb438a;
     --primary: #1dc8e8;
@@ -54,30 +60,46 @@ h1 {
     }
 }
 
-
-button {
-    background: var(--secondary);
+button:not(.btn-pushable) {
+    background: transparent;
     min-height: 40px;
     border: none;
     cursor: pointer;
     border-radius: 8px;
     padding: 0 20px;
+    position: relative;
+    z-index: 2;
 
     &:hover {
-        background: #e63075;
-        /* background: hwb(from #fb438a h calc(w + 0.1) b); */
+
+        &::before {
+            /* background: #e63075; */
+        }
+        
+        &::after {
+            background: #e63075;
+            transform: translate(1px, 2px);
+        }
     }
-}
 
-.login-btn {
-    background: var(--secondary);
-    padding: 12px 24px;
-    border-radius: 3px;
-    color: #fff;
-    text-decoration: none;
+    &::before {
+        z-index: -1;
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: #fff;
+        transform: translate(2px, 3px);
+        border-radius: inherit;
+    }
 
-    &:hover {
-        background: #e63075;
+    &::after {
+        z-index: -1;
+        background: var(--secondary);
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--secondary);
+        border-radius: inherit;
     }
 }
 

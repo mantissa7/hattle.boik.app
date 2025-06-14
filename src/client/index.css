@@ -1,30 +1,82 @@
 @import "../assets/css/base.css";
 
-.banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
+#app {
+  height: 90vh;
   display: grid;
   place-items: center;
 
-  &.success {
-    background: green;
-  }
+  main {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-rows: max-content 1fr;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
 
-  &.error {
-    background: #ad0303;
+    h1 {
+      font-size: 140px;
+      letter-spacing: 40px;
+    }
   }
 }
 
-.app {
+#game {
   display: grid;
   grid-auto-flow: row;
   grid-template-rows: max-content 1fr;
   gap: 20px;
   max-width: 1400px;
   margin: 0 auto;
+
+  nav {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    >:first-child {
+      justify-self: start;
+    }
+
+    >:last-child {
+      justify-self: end;
+    }
+  }
+
+  &.complete {
+    .progress {
+      transform: translateY(30px) scale(1.5);
+    }
+  }
+
+  .progress {
+    border: 2px solid rgba(from var(--secondary) r g b / 0.5);
+    border-radius: 30px;
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    padding: 8px;
+    gap: 6px;
+    z-index: 10;
+
+    >div {
+      width: 30px;
+      height: 30px;
+      background: rgba(from var(--secondary) r g b / 0.5);
+      padding: 2px;
+      border-radius: 30px;
+
+      &.good {
+        background: var(--primary);
+      }
+
+      &.bad {
+        background: #e71515;
+      }
+    }
+  }
 
   main {
     display: grid;
@@ -46,18 +98,18 @@
   form.guesses {
     display: grid;
     grid-auto-flow: row;
-    gap: 20px;
+    gap: 40px;
     justify-self: stretch;
 
     &:invalid {
-      input[type=submit] {
+      button[type=submit] {
         /* background: red!important; */
         cursor: not-allowed;
         opacity: 0.5;
-      }  
+      }
     }
 
-    input[type=submit] {
+    /* input[type=submit] {
       background: var(--secondary);
       border: none;
       height: 50px;
@@ -65,11 +117,13 @@
       padding: 0 20px;
       grid-column: 1 / -1;
       cursor: pointer;
+      justify-self: center;
+      min-width: 300px;
 
       &:hover {
         background: hsl(from var(--secondary) h calc(s + 25) l);
       }
-    }
+    } */
 
     fieldset.radio-group {
       display: grid;
@@ -155,7 +209,6 @@
         }
       }
     }
-
   }
 
   .answer {
@@ -168,12 +221,16 @@
     justify-items: center;
     align-content: center;
 
+    button {
+      --btn-primary: var(--primary);
+      /* border: 2px solid #fff; */
+    }
+
     .cokhex {
       font-family: CockHex, sans-serif;
       font-size: 70px;
       letter-spacing: 10px;
       color: #fff;
-      /* text-shadow: 0 0 4px #000; */
       -webkit-text-stroke: 2px black;
     }
 
@@ -189,64 +246,17 @@
     }
   }
 
-}
+  #alsitty {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    transition: all 300ms ease;
+    transform-origin: bottom left;
+    z-index: 10;
 
-
-#alsitty {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 50px;
-  transition: all 300ms ease;
-  transform-origin: bottom left;
-  z-index: 10;
-
-  &:hover {
-    transform: scale(3);
-  }
-}
-
-.loader {
-  position: relative;
-  width: 85px;
-  height: 50px;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(#FFF 50px, transparent 0),
-    linear-gradient(#FFF 50px, transparent 0),
-    linear-gradient(#FFF 50px, transparent 0),
-    linear-gradient(#FFF 50px, transparent 0),
-    linear-gradient(#FFF 50px, transparent 0),
-    linear-gradient(#FFF 50px, transparent 0);
-  background-position: 0px center, 15px center, 30px center, 45px center, 60px center, 75px center, 90px center;
-  animation: rikSpikeRoll 0.65s linear infinite alternate;
-}
-
-@keyframes rikSpikeRoll {
-  0% {
-    background-size: 10px 3px;
-  }
-
-  16% {
-    background-size: 10px 50px, 10px 3px, 10px 3px, 10px 3px, 10px 3px, 10px 3px
-  }
-
-  33% {
-    background-size: 10px 30px, 10px 50px, 10px 3px, 10px 3px, 10px 3px, 10px 3px
-  }
-
-  50% {
-    background-size: 10px 10px, 10px 30px, 10px 50px, 10px 3px, 10px 3px, 10px 3px
-  }
-
-  66% {
-    background-size: 10px 3px, 10px 10px, 10px 30px, 10px 50px, 10px 3px, 10px 3px
-  }
-
-  83% {
-    background-size: 10px 3px, 10px 3px, 10px 10px, 10px 30px, 10px 50px, 10px 3px
-  }
-
-  100% {
-    background-size: 10px 3px, 10px 3px, 10px 3px, 10px 10px, 10px 30px, 10px 50px
+    &:hover {
+      transform: scale(3);
+    }
   }
 }

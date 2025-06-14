@@ -1,16 +1,8 @@
 import { serve } from "bun";
 import index from "./client/index.html";
 // import admin from "./admin/index.html";
-import { store, type User } from "./lib/db";
-import { hattle_set, validate_guess } from "./lib/boik";
-
-const session_user = async (session_id: string | null): Promise<User | null> => {
-	if (!session_id) {
-		return null;
-	}
-
-	return await store.auth_user(session_id);
-};
+import { hattle_set, session_user, validate_guess } from "./lib/boik";
+import { required } from "./lib/util";
 
 const server = serve({
 	routes: {
@@ -24,41 +16,49 @@ const server = serve({
 		 * * * * * * * * * * * * * * * * * **/
 		"/api/me": {
 			async GET(req) {
-				return new Response("{}");
+				const user = await session_user(req.headers.get("Authorization"));
+				return new Response(JSON.stringify(user));
 			},
 		},
-		"/api/videos": {
+		"/api/set": {
 			async GET(req) {
-				const vids = await hattle_set();
+				// const user = await session_user(req.headers.get("Authorization"));
+				const set = await hattle_set(null);
 
 				return new Response(
 					JSON.stringify(
-						vids.map((vid) => ({
-							id: vid.id,
-							thumbnails: vid.thumbnails,
-							daily: vid.daily,
+						set.map((question) => ({
+							set_id: question.set_id,
+							vid: question.vid,
+							thumbnails: question.thumbnails,
+							daily: question.daily,
 						})),
 					),
 				);
 			},
+			// Submit answer
 			async POST(req) {
 				try {
 					const fd = await req.formData();
-					const id = fd.get("id") as string | undefined;
-	
-					if (id === null || id === undefined) {
+
+					if (!required([fd.get("set_id"), fd.get("vid"), fd.get("month"), fd.get("year")])) {
 						return new Response(
 							JSON.stringify({
-								error: "missing id",
+								error: "missing props",
 							}),
 							{
 								status: 400,
 							},
 						);
 					}
-	
-					const correct = await validate_guess(id, fd.get("question"), fd.get("month"), fd.get("year"));
-	
+
+					const set_id = fd.get("set_id") as string;
+					const vid = +(fd.get("vid") as string);
+					const month = +(fd.get("month") as string);
+					const year = +(fd.get("year") as string);
+
+					const correct = await validate_guess(set_id, vid, month, year);
+
 					return new Response(
 						JSON.stringify({
 							result: correct,
@@ -67,11 +67,11 @@ const server = serve({
 							status: 200,
 						},
 					);
-				} catch(error) {
-					console.error(error)
+				} catch (error) {
+					console.error(error);
 					return new Response('{error: "OOPS"}', {
-						status: 500
-					})
+						status: 500,
+					});
 				}
 			},
 		},

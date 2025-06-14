@@ -1,7 +1,15 @@
 import { sql } from "bun";
 
-export type HattleVid = {
+export type Session = {
 	id: string;
+	hattle_set: number;
+	step: number;
+	created_at: string; // iso8601 timestamp
+}
+
+export type HattleVid = {
+	set_id: string;
+	vid: number;
 	published_at: string; // iso8601 timestamp
 	thumbnails: {
 		maxres: string;
@@ -9,7 +17,7 @@ export type HattleVid = {
 	daily: string; // iso8601 timestamp
 };
 
-export const session_user = async (id?: string): Promise<HattleVid[]> => {
+export const session_user = async (id: string | null): Promise<Session> => {
 	const rows = await sql`
 		select * from get_hattle_session(${id});
     `.values();
@@ -17,7 +25,7 @@ export const session_user = async (id?: string): Promise<HattleVid[]> => {
 	return rows[0][0];
 };
 
-export const hattle_set = async (id?: string): Promise<HattleVid[]> => {
+export const hattle_set = async (id: string | null): Promise<HattleVid[]> => {
 	return await sql`
 		select * from hattle_set(${id});
     `;
@@ -25,12 +33,12 @@ export const hattle_set = async (id?: string): Promise<HattleVid[]> => {
 
 export const validate_guess = async (
 	id: string,
-	question_num: number,
+	vid: number,
 	month: number,
 	year: number,
 ): Promise<HattleVid[]> => {
 	const rows = await sql`
-		select * from validate_guess(${id}, ${question_num}, ${month}, ${year});
+		select * from validate_guess(${id}, ${vid}, ${month}, ${year});
     `.values();
 
 	return rows[0][0];
