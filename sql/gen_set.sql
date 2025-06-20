@@ -10,6 +10,7 @@ $$
         from  (
             SELECT    v.id
             FROM      video v
+            where     channel_id != 'UCj9naD1BeTO77JW1qRQKKZQ' -- ignore crumbs8 channel
             order by  random()
             LIMIT     10
         ) as x

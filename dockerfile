@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 COPY . .
 RUN bun install --frozen-lockfile
 
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 USER bun
 EXPOSE 3000/tcp
 ENTRYPOINT [ "bun", "./src/server.ts" ]

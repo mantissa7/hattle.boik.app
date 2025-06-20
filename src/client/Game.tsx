@@ -147,7 +147,7 @@ export function App() {
               </label>
             ))}
           </fieldset>
-          <Button type="submit">PLAY</Button>
+          <Button type="submit">GUESS</Button>
         </form>
       </main>
 
