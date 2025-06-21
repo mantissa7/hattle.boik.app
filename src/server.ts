@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import index from "./client/index.html";
 // import admin from "./admin/index.html";
-import { hattle_set, session_user, validate_guess } from "./lib/boik";
+import { daily_set, random_set, session_user, validate_guess } from "./lib/boik";
 import { required } from "./lib/util";
 
 const server = serve({
@@ -23,7 +23,9 @@ const server = serve({
 		"/api/set": {
 			async GET(req) {
 				// const user = await session_user(req.headers.get("Authorization"));
-				const set = await hattle_set(null);
+				// const type = req.params
+				const type = new URL(req.url).searchParams.get('type') ?? 'daily';
+				const set = type === 'daily' ? await daily_set() : await random_set();
 
 				return new Response(
 					JSON.stringify(
@@ -57,11 +59,11 @@ const server = serve({
 					const month = +(fd.get("month") as string);
 					const year = +(fd.get("year") as string);
 
-					const correct = await validate_guess(set_id, vid, month, year);
+					const guess = await validate_guess(set_id, vid, month, year);
 
 					return new Response(
 						JSON.stringify({
-							result: correct,
+							data: guess
 						}),
 						{
 							status: 200,

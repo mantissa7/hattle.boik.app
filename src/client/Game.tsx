@@ -1,29 +1,7 @@
 import alsitty from "@/assets/alsitty.png";
 import { Button } from "@/components/button/Button";
-import type { Session } from "@/lib/boik";
-import { type FormEventHandler, useEffect, useRef, useState } from "react";
-
-type Video = {
-  set_id: string;
-  vid: number;
-  published_at: string;
-  title: string;
-  thumbnails: Thumbnails;
-}
-
-type Thumbnail = {
-  url: string;
-  width: number;
-  height: number;
-}
-
-type Thumbnails = {
-  default: Thumbnail;
-  medium: Thumbnail;
-  high: Thumbnail;
-  standard: Thumbnail;
-  maxres: Thumbnail;
-};
+import type { HattleVid, ValidatedGuess } from "@/lib/boik";
+import { type FormEventHandler, useRef, useState } from "react";
 
 const years = [
   2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
@@ -37,28 +15,25 @@ const months = [
   'October', 'Novemeber', 'December'
 ];
 
+interface Props {
+  set: HattleVid[];
+}
 
 
-export function App() {
+export function Game(props: Props) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [answers, setAnswers] = useState<(boolean | null)[]>([]);
+  const [answers, setAnswers] = useState<({ year: boolean; month: boolean } | null)[]>([]);
   const [answer, setAnswer] = useState<boolean | null>(null);
-  const [videos, setVideos] = useState<Video[]>([]);
   const [question, setQuestion] = useState<number>(0);
-  const video = videos[question];
-  const gameComplete = answers.length === videos.length;
+  const video = props.set[question];
+  const gameComplete = answers.length === props.set.length;
 
-
-
-  useEffect(() => {
-    (async () => {
-      const videoResp = await fetch('/api/set');
-      const videos = await videoResp.json();
-      setVideos(videos);
-    })();
-  }, []);
-
+  const resetGame = () => {
+    formRef.current?.reset();
+    setAnswer(null)
+    setAnswers([]);
+    setQuestion(0);
+  }
 
   const handleGuess: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -68,7 +43,7 @@ export function App() {
 
     const res = await fetch(form.action, {
       method: "POST",
-      body: fd
+      body: fd,
     })
 
     if (!res.ok) {
@@ -76,21 +51,16 @@ export function App() {
       return
     }
 
-    const body = await res.json();
-    const is_correct = Boolean(body.result);
+    const body = await res.json() as { data: ValidatedGuess };
+    // body.data.month
+    // body.data.year
+    const is_correct = Boolean(body.data.correct);
 
     setAnswer(is_correct);
 
-    setAnswers([...answers, is_correct]);
+    setAnswers([...answers, { year: body.data.year, month: body.data.month }]);
 
     return false;
-  }
-
-  const resetGame = () => {
-    formRef.current?.reset();
-    setAnswer(null)
-    setAnswers([]);
-    setQuestion(0);
   }
 
   const onNextQuestion = () => {
@@ -98,10 +68,14 @@ export function App() {
       resetGame();
       return;
     }
-    
+
     formRef.current?.reset();
     setAnswer(null);
     setQuestion(question + 1);
+  }
+
+  const loadRandomPractice = () => {
+
   }
 
 
@@ -110,8 +84,8 @@ export function App() {
       <nav>
         <h1>HATTLE</h1>
         <div className="progress">
-          {videos.map((vid, i) => (
-            <div key={vid.vid} className={`${answers[i] ? 'good' : (answers[i] === false ? 'bad' : '')}`}></div>
+          {props.set.map((vid, i) => (
+            <div key={vid.vid} className={`${answers[i] ? 'played' : ''} ${answers[i]?.year ? 'year' : ''} ${answers[i]?.month ? 'month' : ''}`}></div>
           ))}
         </div>
         <div className="meta">
@@ -135,7 +109,7 @@ export function App() {
             {years.map(yr => (
               <label className="radio-group-option" key={yr}>
                 <span>{yr}</span>
-                <input key={yr} type="radio" name="year" value={yr} required/>
+                <input key={yr} type="radio" name="year" value={yr} required />
               </label>
             ))}
           </fieldset>
@@ -143,7 +117,7 @@ export function App() {
             {months.map((mnth, i) => (
               <label className="radio-group-option" key={mnth}>
                 <span>{mnth}</span>
-                <input key={mnth} type="radio" name="month" value={i + 1} required/>
+                <input key={mnth} type="radio" name="month" value={i + 1} required />
               </label>
             ))}
           </fieldset>
@@ -159,20 +133,29 @@ export function App() {
           {answer === false && (
             <div className="cokhex">munter</div>
           )}
+          <div className="chips">
+            <div className={`chip ${answers[question]?.year ? 'correct' : 'wrong'}`}>Year</div>
+            <div className={`chip ${answers[question]?.month ? 'correct' : 'wrong'}`}>Month</div>
+          </div>
           <Button type="button" onClick={() => onNextQuestion()}>
-            {gameComplete ? 'RESTART' : 'NEXT'}
+            NEXT
           </Button>
-          {/* <button type="button" onClick={() => onNextQuestion()}>
-            {gameComplete ? 'RESTART' : 'NEXT'}
-          </button> */}
         </div>
       )}
 
-      {session && (
-        <img id="alsitty" src={alsitty} alt=""/>
-      )}
+      {/* {gameComplete ?? (
+        <div className="answer">
+          DO IT YOU PUSSY!
+          <Button type="button" onClick={() => loadRandomPractice()}>
+            Random Practice
+          </Button>
+        </div>
+      )} */}
+
+
+      <img id="alsitty" src={alsitty} alt="" />
     </div>
   );
 }
 
-export default App;
+export default Game;

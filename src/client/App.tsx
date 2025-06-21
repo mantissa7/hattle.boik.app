@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import "./index.css";
-import type { Session } from "@/lib/boik";
+import type { HattleVid, Session } from "@/lib/boik";
 import Game from "./Game";
 import { Button } from "@/components/button/Button";
 
 export function App() {
-  const [playing, setPlaying] = useState<boolean>(false);
   // const [session, setSession] = useState<Session | null>(null);
+  const [videos, setVideos] = useState<HattleVid[]>([]);
 
+
+  const fetchSet = async (type: string) => {
+    const videoResp = await fetch(`/api/set?type=${type}`);
+    const videos = await videoResp.json();
+    setVideos(videos);
+  }
 
   // useEffect(() => {
   //   (async () => {
@@ -20,15 +26,18 @@ export function App() {
 
   return (
     <div id="app">
-      {playing ? (
-        <Game />
+      {videos.length ? (
+        <Game set={videos} />
       ) : (
         <main>
           <h1>HATTLE</h1>
           <h2>BETA</h2>
 
-          <Button onClick={() => setPlaying(true)}>
-            PLAY
+          <Button onClick={() => fetchSet('daily')}>
+            PLAY DAILY
+          </Button>
+          <Button onClick={() => fetchSet('random')}>
+            PRACTICE
           </Button>
         </main>
       )}
