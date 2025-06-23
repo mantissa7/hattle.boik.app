@@ -24,6 +24,7 @@ type Thumbnails = {
 export type HattleVid = {
 	set_id: string;
 	vid: number;
+	video_url: string;
 	published_at: string; // iso8601 timestamp
 	thumbnails: Thumbnails;
 	daily: string; // iso8601 timestamp
@@ -33,6 +34,7 @@ export type ValidatedGuess = {
 	correct: boolean;
 	month: boolean;
 	year: boolean;
+	published_at: string;
 };
 
 export const session_user = async (id: string | null): Promise<Session> => {

@@ -1,21 +1,29 @@
-# bun-react-template
+# HATTLE
 
-To install dependencies:
+HAT Films thumbnail guessing game.
 
-```bash
-bun install
-```
+<br/><br/>
+---
 
-To start a development server:
+### Requirements
+- Bun
+- Biome
 
-```bash
+
+### Stack
+- Postgres
+- Bun
+- React
+
+
+### Dev
+```sh
 bun dev
 ```
 
-To run for production:
+### Prod
+```sh
+bun compile
 
-```bash
-bun start
+./server
 ```
-
-This project was created using `bun init` in bun v1.2.14. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.

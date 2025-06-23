@@ -1,10 +1,11 @@
 -- drop FUNCTION hattle_set(text);
 CREATE or replace FUNCTION hattle_set(_id text)
-RETURNS table(set_id text, vid text, published_at text, thumbnails jsonb, daily text)
+RETURNS table(set_id text, vid text, video_url text, published_at text, thumbnails jsonb, daily text)
 AS
 $$
 	select		s.id as set_id,
 	        	vid,
+				concat('https://www.youtube.com/watch?v=', v.video_id) as video_url,
 				v.published_at,
 				v.thumbnails,
 				s.daily
@@ -28,12 +29,14 @@ LANGUAGE SQL;
 -- select * from hattle_set('0de4f804dae2db399132a2173c3f082f');
 
 
+-- drop function hattle_practice_set();
 CREATE or replace FUNCTION hattle_practice_set()
-RETURNS table(set_id text, vid text, published_at text, thumbnails jsonb, daily text)
+RETURNS table(set_id text, vid text, video_url text, published_at text, thumbnails jsonb, daily text)
 AS
 $$
 	select		s.id as set_id,
 	        	vid,
+				concat('https://www.youtube.com/watch?v=', v.video_id) as video_url,
 				v.published_at,
 				v.thumbnails,
 				s.daily
@@ -51,7 +54,4 @@ $$
 
 $$
 LANGUAGE SQL;
-
-
--- select * from hattle_set();
 -- select * from hattle_set();

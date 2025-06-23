@@ -15,6 +15,10 @@ export function App() {
     setVideos(videos);
   }
 
+  const handleEnd = () => {
+    
+  }
+
   // useEffect(() => {
   //   (async () => {
   //     const seshResp = await fetch('/api/me');
@@ -27,7 +31,7 @@ export function App() {
   return (
     <div id="app">
       {videos.length ? (
-        <Game set={videos} />
+        <Game set={videos} onEnd={handleEnd}/>
       ) : (
         <main>
           <h1>HATTLE</h1>

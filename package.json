@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@biomejs/biome": "^1.9.4",
+    "date-fns": "^4.1.0",
     "react": "^19",
     "react-dom": "^19"
   },

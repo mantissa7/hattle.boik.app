@@ -1,14 +1,16 @@
 -- drop FUNCTION validate_guess(text, int, int, int);
 CREATE or replace FUNCTION validate_guess(_set_id text, _vid int, _month int, _year int)
-RETURNS table (correct bool, month bool, year bool)
+RETURNS table (correct bool, month bool, year bool, published_at text)
 AS
 $$
 	select 	case when x.month = _month and x.year = _year then true else false end as correct,
 	        case when x.month = _month then true else false end as month,
-			case when x.year = _year then true else false end as year
+			case when x.year = _year then true else false end as year,
+			x.published_at
 	from (
 		select			date_part('month', v.published_at::timestamptz) as month,
-						date_part('year', v.published_at::timestamptz) as year
+						date_part('year', v.published_at::timestamptz) as year,
+						v.published_at as published_at
 		FROM			hattle_set hs
 		inner join  	video v on v.id = _vid
 		where 			hs.id = _set_id

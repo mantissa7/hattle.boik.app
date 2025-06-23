@@ -24,14 +24,15 @@ const server = serve({
 			async GET(req) {
 				// const user = await session_user(req.headers.get("Authorization"));
 				// const type = req.params
-				const type = new URL(req.url).searchParams.get('type') ?? 'daily';
-				const set = type === 'daily' ? await daily_set() : await random_set();
+				const type = new URL(req.url).searchParams.get("type") ?? "daily";
+				const set = type === "daily" ? await daily_set() : await random_set();
 
 				return new Response(
 					JSON.stringify(
 						set.map((question) => ({
 							set_id: question.set_id,
 							vid: question.vid,
+							video_url: question.video_url,
 							thumbnails: question.thumbnails,
 							daily: question.daily,
 						})),
@@ -63,7 +64,7 @@ const server = serve({
 
 					return new Response(
 						JSON.stringify({
-							data: guess
+							data: guess,
 						}),
 						{
 							status: 200,

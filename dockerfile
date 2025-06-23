@@ -1,12 +1,18 @@
-# see all versions at https://hub.docker.com/r/oven/bun/tags
-# FROM oven/bun:latest
-FROM oven/bun:1.2.12
+FROM oven/bun:alpine AS base
+
 WORKDIR /usr/src/app
 
-COPY . .
-RUN bun install --frozen-lockfile
+COPY package.json ./
+COPY bun.lock ./
+COPY bunfig.toml ./
+COPY tsconfig.json ./
+COPY src ./src
 
-# ENV NODE_ENV=production
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "./src/server.ts" ]
+RUN bun install
+RUN bun build ./src/server.ts --compile --outfile hattle --minify --define:process.env.NODE_ENV='\"production\"'
+
+
+FROM alpine:latest
+COPY --from=base /usr/src/app/hattle .
+RUN apk add libgcc libstdc++
+ENTRYPOINT ["./hattle"]
